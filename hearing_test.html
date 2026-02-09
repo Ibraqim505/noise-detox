@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}Проверка слуха - Шумовой детокс{% endblock %}
+
+{% block content %}
+<div style="margin-top: 80px; padding: 3rem 2rem;">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <h1 class="section-title">👂 Проверка слуха</h1>
+            <p class="section-subtitle">
+                Регулярная проверка слуха помогает вовремя заметить изменения
+            </p>
+        </div>
+
+        <div style="max-width: 900px; margin: 0 auto;">
+            <!-- Введение -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <h2 style="margin-bottom: 1rem;">О тесте слуха</h2>
+                <p style="margin-bottom: 1rem;">
+                    Слух — это первое, что страдает от постоянного шума. Регулярная проверка 
+                    помогает вовремя заметить изменения и скорректировать образ жизни.
+                </p>
+                <p style="color: var(--color-text-secondary);">
+                    Для точной проверки слуха используйте мобильные приложения, такие как 
+                    <strong>"Шумахер"</strong> или аналоги, которые проверяют восприятие 
+                    звуков на разных частотах.
+                </p>
+            </div>
+
+            <!-- Инструкция -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <h2 style="margin-bottom: 1.5rem;">📋 Инструкция по тестированию</h2>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.2rem;">1️⃣ Подготовка</h3>
+                    <ul style="line-height: 2; color: var(--color-text-secondary);">
+                        <li>Найдите максимально тихое помещение</li>
+                        <li>Используйте качественные наушники</li>
+                        <li>Выберите время, когда вы спокойны и отдохнули</li>
+                        <li>Выключите все источники фонового шума</li>
+                    </ul>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.2rem;">2️⃣ Проведение теста</h3>
+                    <ul style="line-height: 2; color: var(--color-text-secondary);">
+                        <li>Скачайте приложение для проверки слуха (например, "Шумахер")</li>
+                        <li>Следуйте инструкциям приложения</li>
+                        <li>Честно отмечайте, слышите ли вы звук</li>
+                        <li>Не включайте громкость на максимум</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 style="margin-bottom: 1rem; font-size: 1.2rem;">3️⃣ Фиксация результата</h3>
+                    <ul style="line-height: 2; color: var(--color-text-secondary);">
+                        <li>Запишите дату теста</li>
+                        <li>Отметьте общий результат</li>
+                        <li>Сохраните детали (если приложение позволяет)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Важное примечание -->
+            <div class="warning-box">
+                <h3 style="margin-bottom: 0.75rem;">⚠️ Важное примечание</h3>
+                <p>
+                    Данные, полученные с помощью мобильных приложений, <strong>не являются 
+                    медицинским диагнозом</strong> и используются исключительно в образовательных 
+                    целях для самонаблюдения. При обнаружении проблем со слухом необходимо 
+                    обратиться к врачу-отоларингологу.
+                </p>
+            </div>
+
+            <!-- Форма записи результатов -->
+            <div class="card" style="margin-top: 2rem;">
+                <h2 style="margin-bottom: 1.5rem;">📝 Запись результатов теста</h2>
+                
+                <form id="hearingTestForm">
+                    <div class="form-group">
+                        <label class="form-label">📅 Дата прохождения теста</label>
+                        <input type="date" id="testDate" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">📊 Общий результат</label>
+                        <select id="result" class="form-select" required>
+                            <option value="">Выберите результат...</option>
+                            <option value="excellent">⭐ Отличный слух</option>
+                            <option value="normal">✅ Норма</option>
+                            <option value="slight">⚠️ Небольшое снижение восприятия</option>
+                            <option value="moderate">❗ Умеренное снижение</option>
+                            <option value="significant">🚨 Значительные трудности</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">🎧 Проблемные частоты (если есть)</label>
+                        <input type="text" id="frequencies" class="form-input" 
+                               placeholder="Например: высокие частоты, 8000 Гц">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">📝 Дополнительные замечания</label>
+                        <textarea id="testNotes" class="form-textarea" 
+                                  placeholder="Любые наблюдения или детали теста..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-save"></i>
+                        Сохранить результаты
+                    </button>
+                </form>
+            </div>
+
+            <!-- Рекомендации -->
+            <div class="info-box" style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">💡 Рекомендации по частоте проверок</h3>
+                <ul style="line-height: 2;">
+                    <li><strong>Первый тест</strong> — в начале проекта (базовая линия)</li>
+                    <li><strong>Повторный тест</strong> — через 2 недели наблюдений</li>
+                    <li><strong>При регулярном воздействии громкого шума</strong> — каждые 2 недели</li>
+                    <li><strong>Профилактика</strong> — раз в 3-6 месяцев</li>
+                </ul>
+            </div>
+
+            <!-- История тестов -->
+            <div style="margin-top: 3rem;">
+                <h2 class="section-title">История тестов</h2>
+                <div id="testHistory"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Установка текущей даты
+document.getElementById('testDate').value = new Date().toISOString().split('T')[0];
+
+// Отправка формы
+document.getElementById('hearingTestForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const test = {
+        testDate: document.getElementById('testDate').value,
+        result: document.getElementById('result').value,
+        frequencies: document.getElementById('frequencies').value,
+        notes: document.getElementById('testNotes').value
+    };
+    
+    db.addHearingTest(test);
+    Notification.success('Результаты теста сохранены!');
+    
+    // Очистка формы
+    this.reset();
+    document.getElementById('testDate').value = new Date().toISOString().split('T')[0];
+    
+    // Обновление истории
+    loadTestHistory();
+});
+
+// Загрузка истории тестов
+function loadTestHistory() {
+    const tests = db.getHearingTests().reverse();
+    const container = document.getElementById('testHistory');
+    
+    if (tests.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--color-text-secondary);">Вы еще не проходили тесты. Заполните форму выше!</p>';
+        return;
+    }
+    
+    const resultNames = {
+        excellent: '⭐ Отличный слух',
+        normal: '✅ Норма',
+        slight: '⚠️ Небольшое снижение',
+        moderate: '❗ Умеренное снижение',
+        significant: '🚨 Значительные трудности'
+    };
+    
+    const resultColors = {
+        excellent: '#34c759',
+        normal: '#34c759',
+        slight: '#ff9f0a',
+        moderate: '#ff9f0a',
+        significant: '#ff453a'
+    };
+    
+    container.innerHTML = tests.map((test, index) => `
+        <div class="card" style="margin-bottom: 1rem; border-left: 4px solid ${resultColors[test.result]};">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                <div>
+                    <h3 style="margin-bottom: 0.5rem;">Тест #${tests.length - index}</h3>
+                    <p style="color: var(--color-text-secondary);">
+                        ${DateUtils.formatDate(test.testDate)}
+                    </p>
+                </div>
+                <button onclick="deleteTest('${test.id}')" class="btn" style="padding: 0.5rem; background: transparent; color: var(--color-danger);">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            
+            <div style="background: var(--color-bg-subtle); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <strong>Результат:</strong> ${resultNames[test.result]}
+            </div>
+            
+            ${test.frequencies ? `
+                <div style="margin-bottom: 1rem;">
+                    <strong>Проблемные частоты:</strong> ${test.frequencies}
+                </div>
+            ` : ''}
+            
+            ${test.notes ? `
+                <div style="padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+                    <strong>Заметки:</strong><br>
+                    <em style="color: var(--color-text-secondary);">${test.notes}</em>
+                </div>
+            ` : ''}
+        </div>
+    `).join('');
+    
+    // Добавляем сравнение, если есть несколько тестов
+    if (tests.length >= 2) {
+        const comparison = document.createElement('div');
+        comparison.className = 'info-box';
+        comparison.style.marginTop = '2rem';
+        
+        const first = tests[tests.length - 1];
+        const last = tests[0];
+        
+        const resultValues = {
+            excellent: 5,
+            normal: 4,
+            slight: 3,
+            moderate: 2,
+            significant: 1
+        };
+        
+        const diff = resultValues[last.result] - resultValues[first.result];
+        let message = '';
+        
+        if (diff > 0) {
+            message = '<strong style="color: #34c759;">📈 Улучшение!</strong> Ваш слух показал положительную динамику.';
+        } else if (diff < 0) {
+            message = '<strong style="color: #ff453a;">📉 Ухудшение</strong> Рекомендуется снизить воздействие шума и обратиться к врачу.';
+        } else {
+            message = '<strong>➡️ Стабильно</strong> Результаты остаются на том же уровне.';
+        }
+        
+        comparison.innerHTML = `
+            <h3 style="margin-bottom: 1rem;">📊 Динамика</h3>
+            <p>${message}</p>
+            <p style="margin-top: 1rem; color: var(--color-text-secondary);">
+                Первый тест (${DateUtils.formatDate(first.testDate)}): ${resultNames[first.result]}<br>
+                Последний тест (${DateUtils.formatDate(last.testDate)}): ${resultNames[last.result]}
+            </p>
+        `;
+        
+        container.appendChild(comparison);
+    }
+}
+
+// Удаление теста
+function deleteTest(id) {
+    if (confirm('Вы уверены, что хотите удалить этот тест?')) {
+        const tests = db.getHearingTests().filter(t => t.id !== id);
+        localStorage.setItem('noise_detox_hearing', JSON.stringify(tests));
+        Notification.success('Тест удален');
+        loadTestHistory();
+    }
+}
+
+// Загрузка при старте
+document.addEventListener('DOMContentLoaded', loadTestHistory);
+</script>
+{% endblock %}

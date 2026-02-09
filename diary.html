@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+
+{% block title %}Дневник наблюдений - Шумовой детокс{% endblock %}
+
+{% block content %}
+<div style="margin-top: 80px; padding: 3rem 2rem;">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <h1 class="section-title">📝 Дневник наблюдений</h1>
+            <p class="section-subtitle">
+                Заполняйте дневник ежедневно, чтобы отслеживать влияние шума на ваше самочувствие
+            </p>
+        </div>
+
+        <!-- Форма дневника -->
+        <div style="max-width: 800px; margin: 0 auto;">
+            <div class="card">
+                <form id="diaryForm">
+                    <!-- Дата и время -->
+                    <div class="form-group">
+                        <label class="form-label">📅 Дата и время</label>
+                        <input type="datetime-local" id="datetime" class="form-input" required>
+                    </div>
+
+                    <!-- Место пребывания -->
+                    <div class="form-group">
+                        <label class="form-label">📍 Место пребывания</label>
+                        <select id="location" class="form-select" required>
+                            <option value="">Выберите место...</option>
+                            <option value="home">🏠 Дом</option>
+                            <option value="school">🏫 Школа/Университет</option>
+                            <option value="street">🚶 Улица</option>
+                            <option value="transport">🚌 Транспорт</option>
+                            <option value="concert">🎵 Концерт/Мероприятие</option>
+                            <option value="other">⚙️ Другое</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="otherLocationGroup" style="display: none;">
+                        <label class="form-label">Укажите место</label>
+                        <input type="text" id="otherLocation" class="form-input" placeholder="Например: торговый центр">
+                    </div>
+
+                    <!-- Уровень шума -->
+                    <div class="form-group">
+                        <label class="form-label">🔊 Уровень шума</label>
+                        <div class="noise-levels">
+                            <div class="noise-level">
+                                <input type="radio" name="noiseLevel" id="quiet" value="quiet" required>
+                                <label for="quiet">
+                                    <span class="noise-icon">🟢</span>
+                                    <span class="noise-label">Тихо</span>
+                                    <small style="color: var(--color-text-light); font-size: 0.85rem;">Можно услышать шёпот</small>
+                                </label>
+                            </div>
+                            <div class="noise-level">
+                                <input type="radio" name="noiseLevel" id="moderate" value="moderate">
+                                <label for="moderate">
+                                    <span class="noise-icon">🟡</span>
+                                    <span class="noise-label">Умеренно</span>
+                                    <small style="color: var(--color-text-light); font-size: 0.85rem;">Обычный разговор</small>
+                                </label>
+                            </div>
+                            <div class="noise-level">
+                                <input type="radio" name="noiseLevel" id="loud" value="loud">
+                                <label for="loud">
+                                    <span class="noise-icon">🟠</span>
+                                    <span class="noise-label">Шумно</span>
+                                    <small style="color: var(--color-text-light); font-size: 0.85rem;">Приходится повышать голос</small>
+                                </label>
+                            </div>
+                            <div class="noise-level">
+                                <input type="radio" name="noiseLevel" id="veryLoud" value="veryLoud">
+                                <label for="veryLoud">
+                                    <span class="noise-icon">🔴</span>
+                                    <span class="noise-label">Очень шумно</span>
+                                    <small style="color: var(--color-text-light); font-size: 0.85rem;">Трудно расслышать собеседника</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Длительность -->
+                    <div class="form-group">
+                        <label class="form-label">⏱️ Длительность воздействия</label>
+                        <select id="duration" class="form-select" required>
+                            <option value="">Выберите длительность...</option>
+                            <option value="less30">Менее 30 минут</option>
+                            <option value="30-60">30-60 минут</option>
+                            <option value="1-3">1-3 часа</option>
+                            <option value="more3">Более 3 часов</option>
+                        </select>
+                    </div>
+
+                    <!-- Самочувствие -->
+                    <div class="form-group">
+                        <label class="form-label">😊 Физическое самочувствие (можно выбрать несколько)</label>
+                        <div class="emoji-checkboxes">
+                            <div class="emoji-checkbox">
+                                <input type="checkbox" id="good" name="wellbeing" value="good">
+                                <label for="good">
+                                    <span class="emoji-icon">😃</span>
+                                    <span>Бодрость</span>
+                                </label>
+                            </div>
+                            <div class="emoji-checkbox">
+                                <input type="checkbox" id="tired" name="wellbeing" value="tired">
+                                <label for="tired">
+                                    <span class="emoji-icon">😐</span>
+                                    <span>Усталость</span>
+                                </label>
+                            </div>
+                            <div class="emoji-checkbox">
+                                <input type="checkbox" id="headache" name="wellbeing" value="headache">
+                                <label for="headache">
+                                    <span class="emoji-icon">😣</span>
+                                    <span>Головная боль</span>
+                                </label>
+                            </div>
+                            <div class="emoji-checkbox">
+                                <input type="checkbox" id="irritated" name="wellbeing" value="irritated">
+                                <label for="irritated">
+                                    <span class="emoji-icon">😤</span>
+                                    <span>Раздражение</span>
+                                </label>
+                            </div>
+                            <div class="emoji-checkbox">
+                                <input type="checkbox" id="sleepy" name="wellbeing" value="sleepy">
+                                <label for="sleepy">
+                                    <span class="emoji-icon">😴</span>
+                                    <span>Сонливость</span>
+                                </label>
+                            </div>
+                            <div class="emoji-checkbox">
+                                <input type="checkbox" id="tinnitus" name="wellbeing" value="tinnitus">
+                                <label for="tinnitus">
+                                    <span class="emoji-icon">👂</span>
+                                    <span>Звон в ушах</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Концентрация -->
+                    <div class="form-group">
+                        <label class="form-label">🎯 Концентрация внимания</label>
+                        <select id="concentration" class="form-select" required>
+                            <option value="">Выберите...</option>
+                            <option value="easy">✅ Легко сосредоточиться</option>
+                            <option value="moderate">⚠️ Периодически отвлекаюсь</option>
+                            <option value="hard">❌ Очень трудно сконцентрироваться</option>
+                        </select>
+                    </div>
+
+                    <!-- Качество сна -->
+                    <div class="form-group">
+                        <label class="form-label">😴 Качество сна (для вечерней записи)</label>
+                        <select id="sleep" class="form-select">
+                            <option value="">Не применимо</option>
+                            <option value="good">😴 Быстро заснул(а), спал(а) крепко</option>
+                            <option value="longFalling">😕 Долго засыпал(а)</option>
+                            <option value="waking">😖 Часто просыпался(а) ночью</option>
+                            <option value="insomnia">😫 Бессонница</option>
+                        </select>
+                    </div>
+
+                    <!-- Наушники -->
+                    <div class="form-group">
+                        <label class="form-label">🎧 Использование наушников</label>
+                        <select id="headphones" class="form-select" required>
+                            <option value="none">Не использовал(а)</option>
+                            <option value="less1">До 1 часа</option>
+                            <option value="1-3">1-3 часа</option>
+                            <option value="more3">Более 3 часов</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="volumeGroup" style="display: none;">
+                        <label class="form-label">Громкость</label>
+                        <select id="volume" class="form-select">
+                            <option value="low">Низкая</option>
+                            <option value="medium">Средняя</option>
+                            <option value="high">Высокая</option>
+                        </select>
+                    </div>
+
+                    <!-- Дополнительные заметки -->
+                    <div class="form-group">
+                        <label class="form-label">📝 Дополнительные заметки (необязательно)</label>
+                        <textarea id="notes" class="form-textarea" placeholder="Любые дополнительные наблюдения..."></textarea>
+                    </div>
+
+                    <!-- Кнопки -->
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">
+                            <i class="fas fa-save"></i>
+                            Сохранить запись
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                            <i class="fas fa-redo"></i>
+                            Очистить
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Последние записи -->
+            <div style="margin-top: 3rem;">
+                <h2 class="section-title">Последние записи</h2>
+                <div id="recentEntries"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Установка текущей даты и времени
+document.getElementById('datetime').value = new Date().toISOString().slice(0, 16);
+
+// Показать поле для "Другое" место
+document.getElementById('location').addEventListener('change', function() {
+    const otherGroup = document.getElementById('otherLocationGroup');
+    otherGroup.style.display = this.value === 'other' ? 'block' : 'none';
+});
+
+// Показать поле громкости при использовании наушников
+document.getElementById('headphones').addEventListener('change', function() {
+    const volumeGroup = document.getElementById('volumeGroup');
+    volumeGroup.style.display = this.value !== 'none' ? 'block' : 'none';
+});
+
+// Отправка формы
+document.getElementById('diaryForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Собираем данные
+    const wellbeingChecks = Array.from(document.querySelectorAll('input[name="wellbeing"]:checked'))
+        .map(cb => cb.value);
+    
+    if (wellbeingChecks.length === 0) {
+        Notification.error('Пожалуйста, выберите хотя бы один вариант самочувствия');
+        return;
+    }
+    
+    const entry = {
+        datetime: document.getElementById('datetime').value,
+        location: document.getElementById('location').value,
+        otherLocation: document.getElementById('otherLocation').value,
+        noiseLevel: document.querySelector('input[name="noiseLevel"]:checked').value,
+        duration: document.getElementById('duration').value,
+        wellbeing: wellbeingChecks,
+        concentration: document.getElementById('concentration').value,
+        sleep: document.getElementById('sleep').value,
+        headphones: document.getElementById('headphones').value,
+        volume: document.getElementById('volume').value,
+        notes: document.getElementById('notes').value
+    };
+    
+    // Сохраняем в localStorage
+    db.addDiaryEntry(entry);
+    
+    // Уведомление
+    Notification.success('Запись успешно сохранена!');
+    
+    // Очищаем форму
+    setTimeout(() => {
+        resetForm();
+        loadRecentEntries();
+    }, 500);
+});
+
+// Очистка формы
+function resetForm() {
+    document.getElementById('diaryForm').reset();
+    document.getElementById('datetime').value = new Date().toISOString().slice(0, 16);
+    document.getElementById('otherLocationGroup').style.display = 'none';
+    document.getElementById('volumeGroup').style.display = 'none';
+}
+
+// Загрузка последних записей
+function loadRecentEntries() {
+    const entries = db.getDiaryEntries().slice(-5).reverse();
+    const container = document.getElementById('recentEntries');
+    
+    if (entries.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--color-text-secondary);">Записей пока нет. Заполните форму выше!</p>';
+        return;
+    }
+    
+    container.innerHTML = entries.map(entry => {
+        const locationNames = {
+            home: '🏠 Дом',
+            school: '🏫 Школа',
+            street: '🚶 Улица',
+            transport: '🚌 Транспорт',
+            concert: '🎵 Концерт',
+            other: `⚙️ ${entry.otherLocation || 'Другое'}`
+        };
+        
+        const noiseLevelNames = {
+            quiet: '🟢 Тихо',
+            moderate: '🟡 Умеренно',
+            loud: '🟠 Шумно',
+            veryLoud: '🔴 Очень шумно'
+        };
+        
+        return `
+            <div class="card" style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <div>
+                        <strong>${DateUtils.formatDateTime(entry.timestamp)}</strong>
+                        <br>
+                        <span style="color: var(--color-text-secondary);">${locationNames[entry.location]}</span>
+                    </div>
+                    <button onclick="deleteEntry('${entry.id}')" class="btn" style="padding: 0.5rem; background: transparent; color: var(--color-danger);">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div>
+                        <strong>Шум:</strong> ${noiseLevelNames[entry.noiseLevel]}
+                    </div>
+                    <div>
+                        <strong>Самочувствие:</strong> ${entry.wellbeing.join(', ')}
+                    </div>
+                </div>
+                ${entry.notes ? `<div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;"><em>${entry.notes}</em></div>` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+// Удаление записи
+function deleteEntry(id) {
+    if (confirm('Вы уверены, что хотите удалить эту запись?')) {
+        db.deleteDiaryEntry(id);
+        Notification.success('Запись удалена');
+        loadRecentEntries();
+    }
+}
+
+// Загружаем записи при загрузке страницы
+document.addEventListener('DOMContentLoaded', loadRecentEntries);
+</script>
+{% endblock %}
