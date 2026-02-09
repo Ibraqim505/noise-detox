@@ -1,0 +1,511 @@
+{% extends "base.html" %}
+
+{% block title %}Результаты - Шумовой детокс{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div style="margin-top: 80px; padding: 3rem 2rem;">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <h1 class="section-title">📊 Мои результаты</h1>
+            <p class="section-subtitle">
+                Анализ влияния шума на ваше самочувствие
+            </p>
+        </div>
+
+        <!-- Фильтр периода -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <label style="font-weight: 600;">Период:</label>
+                <button class="btn btn-secondary" onclick="setPeriod(7)">7 дней</button>
+                <button class="btn btn-secondary" onclick="setPeriod(14)">14 дней</button>
+                <button class="btn btn-secondary" onclick="setPeriod(30)">30 дней</button>
+                <button class="btn btn-secondary" onclick="setPeriod('all')">Всё время</button>
+            </div>
+        </div>
+
+        <!-- Статистика -->
+        <div id="statsCards" style="margin-bottom: 3rem;"></div>
+
+        <!-- Графики -->
+        <div class="chart-container">
+            <h2 class="chart-title">📈 Уровень шума по дням</h2>
+            <canvas id="noiseChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h2 class="chart-title">🎯 Где я чаще всего сталкиваюсь с шумом</h2>
+            <canvas id="locationChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h2 class="chart-title">😊 Самочувствие и шум</h2>
+            <canvas id="wellbeingChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h2 class="chart-title">💤 Влияние шума на сон</h2>
+            <div id="sleepAnalysis"></div>
+        </div>
+
+        <div class="chart-container">
+            <h2 class="chart-title">🎧 Использование наушников</h2>
+            <canvas id="headphonesChart"></canvas>
+        </div>
+
+        <!-- Выводы -->
+        <div id="conclusions" style="margin-top: 3rem;"></div>
+
+        <!-- Экспорт данных -->
+        <div class="card" style="margin-top: 3rem;">
+            <h2 style="margin-bottom: 1.5rem;">💾 Экспорт данных</h2>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="exportDataToJSON()">
+                    <i class="fas fa-download"></i>
+                    Скачать данные (JSON)
+                </button>
+                <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">
+                    <i class="fas fa-upload"></i>
+                    Импортировать данные
+                </button>
+                <input type="file" id="importFile" style="display: none;" accept=".json" onchange="handleImport(this)">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentPeriod = 7;
+let charts = {};
+
+// Установка периода
+function setPeriod(days) {
+    currentPeriod = days;
+    loadResults();
+}
+
+// Загрузка результатов
+function loadResults() {
+    const allEntries = db.getDiaryEntries();
+    
+    if (allEntries.length === 0) {
+        document.getElementById('statsCards').innerHTML = `
+            <div class="info-box">
+                <h3>Записей пока нет</h3>
+                <p>Начните вести дневник наблюдений, чтобы увидеть результаты анализа!</p>
+                <a href="/diary" class="btn btn-primary" style="margin-top: 1rem;">
+                    Перейти к дневнику
+                </a>
+            </div>
+        `;
+        return;
+    }
+    
+    // Фильтруем по периоду
+    let entries = allEntries;
+    if (currentPeriod !== 'all') {
+        const cutoffDate = DateUtils.getDaysAgo(currentPeriod);
+        entries = allEntries.filter(e => new Date(e.timestamp) >= cutoffDate);
+    }
+    
+    // Статистика
+    displayStats(entries);
+    
+    // Графики
+    displayNoiseChart(entries);
+    displayLocationChart(entries);
+    displayWellbeingChart(entries);
+    displaySleepAnalysis(entries);
+    displayHeadphonesChart(entries);
+    
+    // Выводы
+    displayConclusions(entries);
+}
+
+// Отображение статистики
+function displayStats(entries) {
+    const noiseStats = DataAnalyzer.getNoiseStats(entries);
+    const totalEntries = entries.length;
+    const highNoiseCount = noiseStats.loud + noiseStats.veryLoud;
+    const highNoisePercent = ((highNoiseCount / totalEntries) * 100).toFixed(1);
+    
+    const wellbeingStats = DataAnalyzer.getWellbeingStats(entries);
+    const badWellbeingCount = wellbeingStats.headache + wellbeingStats.irritated + wellbeingStats.tinnitus;
+    const badWellbeingPercent = ((badWellbeingCount / totalEntries) * 100).toFixed(1);
+    
+    const headphonesCount = entries.filter(e => e.headphones !== 'none').length;
+    const headphonesPercent = ((headphonesCount / totalEntries) * 100).toFixed(1);
+    
+    document.getElementById('statsCards').innerHTML = `
+        <div class="cards-grid">
+            <div class="card">
+                <span class="card-icon">📝</span>
+                <h3 class="card-title">${totalEntries}</h3>
+                <p class="card-text">Всего записей</p>
+            </div>
+            <div class="card">
+                <span class="card-icon">🔴</span>
+                <h3 class="card-title">${highNoisePercent}%</h3>
+                <p class="card-text">Дней с сильным шумом</p>
+            </div>
+            <div class="card">
+                <span class="card-icon">😣</span>
+                <h3 class="card-title">${badWellbeingPercent}%</h3>
+                <p class="card-text">Случаев плохого самочувствия</p>
+            </div>
+            <div class="card">
+                <span class="card-icon">🎧</span>
+                <h3 class="card-title">${headphonesPercent}%</h3>
+                <p class="card-text">Использование наушников</p>
+            </div>
+        </div>
+    `;
+}
+
+// График уровня шума
+function displayNoiseChart(entries) {
+    const data = DataAnalyzer.getDailyNoiseData(entries, currentPeriod === 'all' ? 30 : currentPeriod);
+    
+    const ctx = document.getElementById('noiseChart');
+    
+    if (charts.noise) {
+        charts.noise.destroy();
+    }
+    
+    charts.noise = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.map(d => d.date),
+            datasets: [{
+                label: 'Средний уровень шума',
+                data: data.map(d => d.avgNoise),
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 4,
+                    ticks: {
+                        callback: function(value) {
+                            const labels = ['', 'Тихо', 'Умеренно', 'Шумно', 'Очень шумно'];
+                            return labels[value] || '';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// График мест
+function displayLocationChart(entries) {
+    const locations = {};
+    entries.forEach(e => {
+        locations[e.location] = (locations[e.location] || 0) + 1;
+    });
+    
+    const locationNames = {
+        home: 'Дом',
+        school: 'Школа',
+        street: 'Улица',
+        transport: 'Транспорт',
+        concert: 'Концерт',
+        other: 'Другое'
+    };
+    
+    const ctx = document.getElementById('locationChart');
+    
+    if (charts.location) {
+        charts.location.destroy();
+    }
+    
+    charts.location = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(locations).map(l => locationNames[l]),
+            datasets: [{
+                data: Object.values(locations),
+                backgroundColor: [
+                    '#667eea',
+                    '#764ba2',
+                    '#f093fb',
+                    '#4facfe',
+                    '#43e97b',
+                    '#fa709a'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+// График самочувствия
+function displayWellbeingChart(entries) {
+    const stats = DataAnalyzer.getWellbeingStats(entries);
+    
+    const wellbeingNames = {
+        good: 'Бодрость',
+        tired: 'Усталость',
+        headache: 'Головная боль',
+        irritated: 'Раздражение',
+        sleepy: 'Сонливость',
+        tinnitus: 'Звон в ушах'
+    };
+    
+    const ctx = document.getElementById('wellbeingChart');
+    
+    if (charts.wellbeing) {
+        charts.wellbeing.destroy();
+    }
+    
+    charts.wellbeing = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(stats).map(w => wellbeingNames[w]),
+            datasets: [{
+                label: 'Количество случаев',
+                data: Object.values(stats),
+                backgroundColor: [
+                    '#34c759',
+                    '#ff9f0a',
+                    '#ff453a',
+                    '#ff453a',
+                    '#ff9f0a',
+                    '#ff453a'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Анализ сна
+function displaySleepAnalysis(entries) {
+    const sleepEntries = entries.filter(e => e.sleep && e.sleep !== '');
+    
+    if (sleepEntries.length === 0) {
+        document.getElementById('sleepAnalysis').innerHTML = '<p style="text-align: center; color: var(--color-text-secondary);">Недостаточно данных о сне</p>';
+        return;
+    }
+    
+    const sleepQuality = {
+        good: 0,
+        longFalling: 0,
+        waking: 0,
+        insomnia: 0
+    };
+    
+    sleepEntries.forEach(e => {
+        if (sleepQuality.hasOwnProperty(e.sleep)) {
+            sleepQuality[e.sleep]++;
+        }
+    });
+    
+    const sleepNames = {
+        good: '😴 Хороший сон',
+        longFalling: '😕 Долго засыпал',
+        waking: '😖 Просыпался ночью',
+        insomnia: '😫 Бессонница'
+    };
+    
+    const total = sleepEntries.length;
+    
+    document.getElementById('sleepAnalysis').innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            ${Object.entries(sleepQuality).map(([key, count]) => {
+                const percent = ((count / total) * 100).toFixed(1);
+                return `
+                    <div style="text-align: center; padding: 1.5rem; background: var(--color-bg-subtle); border-radius: 12px;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">${sleepNames[key]}</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--color-primary);">${percent}%</div>
+                        <div style="color: var(--color-text-secondary);">${count} из ${total}</div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+// График наушников
+function displayHeadphonesChart(entries) {
+    const headphones = {
+        none: 0,
+        less1: 0,
+        '1-3': 0,
+        more3: 0
+    };
+    
+    entries.forEach(e => {
+        if (headphones.hasOwnProperty(e.headphones)) {
+            headphones[e.headphones]++;
+        }
+    });
+    
+    const headphonesNames = {
+        none: 'Не использовал',
+        less1: 'До 1 часа',
+        '1-3': '1-3 часа',
+        more3: 'Более 3 часов'
+    };
+    
+    const ctx = document.getElementById('headphonesChart');
+    
+    if (charts.headphones) {
+        charts.headphones.destroy();
+    }
+    
+    charts.headphones = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(headphones).map(h => headphonesNames[h]),
+            datasets: [{
+                label: 'Количество дней',
+                data: Object.values(headphones),
+                backgroundColor: ['#34c759', '#ff9f0a', '#ff9f0a', '#ff453a']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Выводы
+function displayConclusions(entries) {
+    const noiseStats = DataAnalyzer.getNoiseStats(entries);
+    const wellbeingStats = DataAnalyzer.getWellbeingStats(entries);
+    const correlation = DataAnalyzer.getNoiseWellbeingCorrelation(entries);
+    
+    const conclusions = [];
+    
+    // Анализ шума
+    const highNoiseCount = noiseStats.loud + noiseStats.veryLoud;
+    if (highNoiseCount > entries.length * 0.3) {
+        conclusions.push({
+            icon: '🔴',
+            title: 'Высокий уровень шума',
+            text: `За выбранный период вы ${highNoiseCount} раз находились в условиях сильного шума. Это составляет ${((highNoiseCount / entries.length) * 100).toFixed(1)}% от всех записей.`,
+            type: 'warning'
+        });
+    }
+    
+    // Анализ самочувствия
+    const badWellbeingCount = wellbeingStats.headache + wellbeingStats.irritated + wellbeingStats.tinnitus;
+    if (badWellbeingCount > entries.length * 0.2) {
+        conclusions.push({
+            icon: '😣',
+            title: 'Частые проблемы с самочувствием',
+            text: `В ${((badWellbeingCount / entries.length) * 100).toFixed(1)}% случаев вы отмечали головную боль, раздражительность или звон в ушах.`,
+            type: 'warning'
+        });
+    }
+    
+    // Анализ наушников
+    const headphonesHigh = entries.filter(e => e.headphones === 'more3' || e.headphones === '1-3').length;
+    if (headphonesHigh > entries.length * 0.3) {
+        conclusions.push({
+            icon: '🎧',
+            title: 'Интенсивное использование наушников',
+            text: `Внимание! Вы часто слушаете музыку в наушниках более 1 часа в день. Это может быть опасно для слуха.`,
+            type: 'warning'
+        });
+    }
+    
+    // Корреляция
+    const veryLoudBad = correlation.veryLoud.bad;
+    const veryLoudTotal = correlation.veryLoud.good + correlation.veryLoud.bad;
+    if (veryLoudTotal > 0 && veryLoudBad / veryLoudTotal > 0.5) {
+        conclusions.push({
+            icon: '📊',
+            title: 'Связь между шумом и самочувствием',
+            text: `В дни с очень высоким уровнем шума вы чаще отмечали плохое самочувствие (${((veryLoudBad / veryLoudTotal) * 100).toFixed(1)}% случаев).`,
+            type: 'info'
+        });
+    }
+    
+    // Позитивные выводы
+    if (noiseStats.quiet > entries.length * 0.4) {
+        conclusions.push({
+            icon: '✅',
+            title: 'Хорошая шумовая гигиена',
+            text: `Отлично! Большую часть времени вы находитесь в тихой среде.`,
+            type: 'success'
+        });
+    }
+    
+    const container = document.getElementById('conclusions');
+    
+    if (conclusions.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    container.innerHTML = `
+        <h2 class="section-title">🔍 Автоматические выводы</h2>
+        ${conclusions.map(c => `
+            <div class="${c.type === 'warning' ? 'warning-box' : 'info-box'}" style="margin-bottom: 1rem;">
+                <h3 style="margin-bottom: 0.75rem;">${c.icon} ${c.title}</h3>
+                <p>${c.text}</p>
+            </div>
+        `).join('')}
+    `;
+}
+
+// Импорт данных
+function handleImport(input) {
+    if (input.files && input.files[0]) {
+        importDataFromJSON(input.files[0]);
+    }
+}
+
+// Загрузка при старте
+document.addEventListener('DOMContentLoaded', () => {
+    loadResults();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Шумовой детокс{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-container">
+        <h1>🎧 Шумовой детокс</h1>
+        <p class="hero-subtitle">Защити себя от невидимого врага — шума</p>
+        <div style="margin-top: 2rem;">
+            <a href="/diary" class="btn btn-primary btn-large">Начать вести дневник</a>
+        </div>
+        
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-number">70 дБ</span>
+                <span class="stat-label">Безопасный предел</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">85 дБ</span>
+                <span class="stat-label">Начало опасности</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">1.1 млрд</span>
+                <span class="stat-label">Людей рискуют потерять слух (ВОЗ)</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Основной контент -->
+<div class="container">
+    <!-- Что такое шум -->
+    <section class="section">
+        <h2 class="section-title">Что такое шум?</h2>
+        <p class="section-subtitle">
+            Шум — это беспорядочное сочетание звуков различной частоты и интенсивности, 
+            которое негативно влияет на здоровье человека.
+        </p>
+
+        <!-- Инфографика уровней шума -->
+        <div class="noise-infographic">
+            <div class="noise-item">
+                <span class="noise-item-name">🌙 Шёпот, тихая библиотека</span>
+                <span class="noise-item-db">30 дБ</span>
+            </div>
+            <div class="noise-item">
+                <span class="noise-item-name">💬 Обычный разговор</span>
+                <span class="noise-item-db">60 дБ</span>
+            </div>
+            <div class="noise-item">
+                <span class="noise-item-name">🚗 Улица с интенсивным движением</span>
+                <span class="noise-item-db">80 дБ</span>
+            </div>
+            <div class="noise-item">
+                <span class="noise-item-name">🚇 Метро, мотоцикл</span>
+                <span class="noise-item-db">90 дБ</span>
+            </div>
+            <div class="noise-item">
+                <span class="noise-item-name">🎵 Концерт, ночной клуб</span>
+                <span class="noise-item-db">110 дБ</span>
+            </div>
+            <div class="noise-item">
+                <span class="noise-item-name">✈️ Взлетающий самолет</span>
+                <span class="noise-item-db">120 дБ</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Почему это важно -->
+    <section class="section">
+        <h2 class="section-title">Почему это важно?</h2>
+        
+        <div class="cards-grid">
+            <div class="card">
+                <span class="card-icon">👂</span>
+                <h3 class="card-title">Влияние на слух</h3>
+                <p class="card-text">
+                    Длительное воздействие шума выше 85 дБ может привести к необратимой 
+                    потере слуха. Повреждаются волосковые клетки внутреннего уха.
+                </p>
+            </div>
+
+            <div class="card">
+                <span class="card-icon">🧠</span>
+                <h3 class="card-title">Нервная система</h3>
+                <p class="card-text">
+                    Постоянный шум повышает уровень стресса, вызывает раздражительность, 
+                    снижает концентрацию внимания и способность к обучению.
+                </p>
+            </div>
+
+            <div class="card">
+                <span class="card-icon">❤️</span>
+                <h3 class="card-title">Сердечно-сосудистая система</h3>
+                <p class="card-text">
+                    Шум увеличивает риск гипертонии и сердечно-сосудистых заболеваний. 
+                    Повышается артериальное давление и частота пульса.
+                </p>
+            </div>
+
+            <div class="card">
+                <span class="card-icon">😴</span>
+                <h3 class="card-title">Качество сна</h3>
+                <p class="card-text">
+                    Шумовое загрязнение нарушает структуру сна, затрудняет засыпание и 
+                    приводит к частым пробуждениям ночью.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Как работает дневник -->
+    <section class="section">
+        <h2 class="section-title">Как работает дневник?</h2>
+        <p class="section-subtitle">
+            Три простых шага для отслеживания влияния шума на ваше здоровье
+        </p>
+
+        <div class="cards-grid">
+            <div class="card">
+                <span class="card-icon">📝</span>
+                <h3 class="card-title">1. Записывайте</h3>
+                <p class="card-text">
+                    Ежедневно фиксируйте уровень шума, место, длительность и своё 
+                    самочувствие в удобной форме.
+                </p>
+            </div>
+
+            <div class="card">
+                <span class="card-icon">👂</span>
+                <h3 class="card-title">2. Проверяйте слух</h3>
+                <p class="card-text">
+                    Регулярно проходите простой тест слуха, чтобы отслеживать возможные 
+                    изменения восприятия звуков.
+                </p>
+            </div>
+
+            <div class="card">
+                <span class="card-icon">📊</span>
+                <h3 class="card-title">3. Анализируйте</h3>
+                <p class="card-text">
+                    Изучайте графики и статистику, выявляйте закономерности между шумом 
+                    и самочувствием.
+                </p>
+            </div>
+        </div>
+
+        <div class="text-center mt-2">
+            <a href="/diary" class="btn btn-primary btn-large">
+                <i class="fas fa-pencil-alt"></i>
+                Начать сейчас
+            </a>
+        </div>
+    </section>
+
+    <!-- Статистика по ВОЗ -->
+    <section class="section">
+        <div class="info-box">
+            <h3 style="margin-bottom: 1rem;">📢 Факты от Всемирной организации здравоохранения (ВОЗ)</h3>
+            <ul style="list-style: none; padding: 0;">
+                <li style="margin-bottom: 0.75rem;">
+                    <strong>🌍</strong> Более <strong>1,1 миллиарда</strong> молодых людей подвержены риску 
+                    потери слуха из-за воздействия шума
+                </li>
+                <li style="margin-bottom: 0.75rem;">
+                    <strong>🎧</strong> <strong>50%</strong> людей в возрасте 12-35 лет подвергаются 
+                    небезопасным уровням звука при использовании наушников
+                </li>
+                <li style="margin-bottom: 0.75rem;">
+                    <strong>⚠️</strong> Воздействие шума выше <strong>85 дБ</strong> в течение 8 часов 
+                    считается опасным для слуха
+                </li>
+                <li>
+                    <strong>💤</strong> Шум во время сна выше <strong>40 дБ</strong> нарушает его качество
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Призыв к действию -->
+    <section class="section text-center">
+        <h2 class="section-title">Начните защищать себя от шума уже сегодня!</h2>
+        <p class="section-subtitle">
+            Ведение дневника поможет вам осознать масштаб проблемы и принять меры по защите здоровья
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="/diary" class="btn btn-primary btn-large">
+                <i class="fas fa-book"></i>
+                Дневник наблюдений
+            </a>
+            <a href="/hearing-test" class="btn btn-secondary btn-large">
+                <i class="fas fa-stethoscope"></i>
+                Проверить слух
+            </a>
+        </div>
+    </section>
+</div>
+{% endblock %}
