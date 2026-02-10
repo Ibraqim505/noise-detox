@@ -28,6 +28,11 @@ def results():
 def protection():
     return render_template('protection.html')
 
+# ✅ ВОТ СЮДА добавляем
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
 # Страница о проекте
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
